@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="NestTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="TitleBarTheme" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:scaleType">center</item>
+    </style>
+</resources>
