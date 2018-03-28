@@ -1,5 +1,6 @@
 package cn.edots.slug.ui.fragment;
 
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
@@ -14,8 +15,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
 import cn.edots.slug.R;
-import cn.edots.slug.model.ViewModel;
 
 
 /**
@@ -24,7 +26,7 @@ import cn.edots.slug.model.ViewModel;
  * @desc
  */
 
-public abstract class TitleBarFragment<VM extends ViewModel> extends BaseFragment<VM> {
+public abstract class TitleBarFragment<VM extends ViewDataBinding & Serializable> extends BaseFragment<VM> {
 
     public static final int _24SP = 24;
     public static final int _23SP = 23;

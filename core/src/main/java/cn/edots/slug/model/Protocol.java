@@ -11,11 +11,18 @@ import cn.edots.slug.Controller;
  * @Description
  */
 
-public abstract class Protocol implements Serializable {
+public class Protocol implements Serializable {
 
-    private Class<Controller> controller;
+    private Class<? extends Controller> controller;
 
-    public Class<Controller> getController() {
+    public Protocol() {
+    }
+
+    public Protocol(Class<? extends Controller> clazz) {
+        this.controller = clazz;
+    }
+
+    public Class<? extends Controller> getController() {
         return controller;
     }
 

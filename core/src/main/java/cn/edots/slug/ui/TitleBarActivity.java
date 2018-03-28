@@ -2,6 +2,7 @@ package cn.edots.slug.ui;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
@@ -20,7 +21,7 @@ import android.widget.TextView;
 
 import cn.edots.slug.R;
 import cn.edots.slug.core.cache.Session;
-import cn.edots.slug.model.ViewModel;
+import cn.edots.slug.model.DataModel;
 import cn.edots.slug.ui.fragment.EmptyFragment;
 
 
@@ -29,7 +30,7 @@ import cn.edots.slug.ui.fragment.EmptyFragment;
  * @date 2017/9/28.
  * @desc
  */
-public abstract class TitleBarActivity<VM extends ViewModel> extends BaseActivity<VM> {
+public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends BaseActivity<VDB> {
 
     public static final int _24SP = 24;
     public static final int _23SP = 23;

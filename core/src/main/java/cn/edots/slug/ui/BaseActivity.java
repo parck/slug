@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -23,7 +25,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +32,10 @@ import java.util.Map;
 import cn.edots.slug.BuildConfig;
 import cn.edots.slug.Controller;
 import cn.edots.slug.Standardize;
-import cn.edots.slug.ui.binder.activity.SlugBinder;
+import cn.edots.slug.annotation.BindLayout;
 import cn.edots.slug.core.ControllerProvider;
 import cn.edots.slug.core.log.Logger;
 import cn.edots.slug.model.Protocol;
-import cn.edots.slug.model.ViewModel;
 
 
 /**
@@ -43,7 +43,7 @@ import cn.edots.slug.model.ViewModel;
  * @date 2017/9/28.
  * @desc
  */
-public abstract class BaseActivity<VM extends ViewModel> extends AppCompatActivity implements View.OnClickListener {
+public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompatActivity implements View.OnClickListener {
 
     public static final String EXIT_ACTION = "EXIT_ACTION";
     public static final String FINISH_PARAMETER_INTENT_DATA = "FINISH_PARAMETER_INTENT_DATA";
@@ -56,16 +56,13 @@ public abstract class BaseActivity<VM extends ViewModel> extends AppCompatActivi
     private Protocol protocol;
     private Controller controller;
 
-    protected final long CURRENT_TIME_MILLIS = System.currentTimeMillis();
     protected final Activity THIS = this;
     protected final String TAG = this.getClass().getSimpleName();
     protected final FinishReceiver finishReceiver = new FinishReceiver();
 
     protected Logger logger;
-    protected SlugBinder sb;
     protected boolean defaultDebugMode = BuildConfig.DEBUG;
-    protected Class<VM> clazz;
-    protected VM viewModel;
+    protected VDB viewDataBinding;
 
     public BaseActivity() {
 
@@ -84,31 +81,31 @@ public abstract class BaseActivity<VM extends ViewModel> extends AppCompatActivi
         super.onCreate(savedInstanceState);
         logger = Logger.getInstance(TAG, defaultDebugMode);
         registerFinishBroadcast();
-        init();
+        init(savedInstanceState);
     }
 
-    private void init() {
+    private void init(Bundle savedInstanceState) {
         try {
             ApplicationInfo appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
             Bundle metaData = appInfo.metaData;
             if (metaData != null) {
                 defaultDebugMode = metaData.getBoolean(DEFAULT_DEBUG_MODE);
             }
-            clazz = (Class<VM>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-            if (clazz != null) viewModel = clazz.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        sb = SlugBinder.getInstance(this, viewModel);
-        logger.i("\"鼻涕虫\" 初始化消耗 " + (System.currentTimeMillis() - CURRENT_TIME_MILLIS) + "ms");
-
+        BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
+        if (layoutResId != null && layoutResId.value() != 0)
+            viewDataBinding = DataBindingUtil.setContentView(this, layoutResId.value());
+        else return; // throw exception
         protocol = (Protocol) getIntent().getSerializableExtra(VIEW_PROTOCOL);
         if (protocol != null && protocol.getController() != null)
             try {
                 controller = ControllerProvider.get(protocol.getController());
-                controller.setViewModel(viewModel);
+                controller.setViewDataModel(viewDataBinding);
                 controller.setContext(this);
+                controller.onCreate(savedInstanceState);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
@@ -141,11 +138,9 @@ public abstract class BaseActivity<VM extends ViewModel> extends AppCompatActivi
     protected void onDestroy() {
         super.onDestroy();
         unregisterFinishBroadcast();
-        if (sb != null) sb.finish();
-        if (controller != null) controller.destroy();
-        viewModel = null;
+        if (controller != null) controller.onDestroy();
+        viewDataBinding = null;
         protocol = null;
-        sb = null;
         System.gc();
     }
 
@@ -259,8 +254,8 @@ public abstract class BaseActivity<VM extends ViewModel> extends AppCompatActivi
         return this.controller;
     }
 
-    public VM getViewModel() {
-        return this.viewModel;
+    public VDB getViewDataBinding() {
+        return this.viewDataBinding;
     }
 
     //======================================================

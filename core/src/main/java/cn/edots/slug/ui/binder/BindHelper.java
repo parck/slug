@@ -21,7 +21,7 @@ import cn.edots.slug.listener.OnTextWatcher;
  * @Date 2018/3/16.
  * @Description
  */
-
+@Deprecated
 public class BindHelper {
 
     public static void byFields(Object object, View provider) throws IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException {

@@ -1,5 +1,7 @@
 package cn.edots.slug.model;
 
+import android.databinding.BaseObservable;
+
 import java.io.Serializable;
 
 /**
@@ -8,5 +10,5 @@ import java.io.Serializable;
  * @Description
  */
 
-public abstract class DataModel implements Serializable {
+public abstract class DataModel extends BaseObservable implements Serializable {
 }

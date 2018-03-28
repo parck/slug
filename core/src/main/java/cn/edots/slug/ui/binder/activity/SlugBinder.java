@@ -17,6 +17,7 @@ import cn.edots.slug.ui.binder.BindHelper;
  * @date 2017/9/25.
  * @desc
  */
+@Deprecated
 public class SlugBinder {
 
     private Activity object;

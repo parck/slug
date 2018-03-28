@@ -1,11 +1,12 @@
 package cn.edots.slug.ui;
 
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import cn.edots.slug.R;
-import cn.edots.slug.model.ViewModel;
+import cn.edots.slug.model.DataModel;
 
 
 /**
@@ -14,7 +15,7 @@ import cn.edots.slug.model.ViewModel;
  * @desc
  */
 
-public abstract class FragmentActivity<VM extends ViewModel> extends TitleBarActivity<VM> {
+public abstract class FragmentActivity<VDB extends ViewDataBinding> extends TitleBarActivity<VDB> {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

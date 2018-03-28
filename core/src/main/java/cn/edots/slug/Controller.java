@@ -1,8 +1,11 @@
 package cn.edots.slug;
 
-import android.content.Context;
+import android.app.Activity;
+import android.databinding.ViewDataBinding;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
-import cn.edots.slug.model.ViewModel;
 
 /**
  * @Author WETOOP
@@ -10,29 +13,32 @@ import cn.edots.slug.model.ViewModel;
  * @Description
  */
 
-public abstract class Controller<VM extends ViewModel> implements Serializable {
+public abstract class Controller<CA extends Activity, VDM extends ViewDataBinding> implements Serializable {
 
-    protected VM viewModel;
+    protected VDM viewDataModel;
 
-    protected Context context;
+    protected CA context;
 
-    public void destroy() {
+    public abstract void onCreate(@Nullable Bundle savedInstanceState);
 
+    public void onDestroy() {
+        viewDataModel = null;
+        context = null;
     }
 
-    public VM getViewModel() {
-        return viewModel;
+    public VDM getViewDataModel() {
+        return viewDataModel;
     }
 
-    public void setViewModel(VM viewModel) {
-        this.viewModel = viewModel;
+    public void setViewDataModel(VDM viewDataModel) {
+        this.viewDataModel = viewDataModel;
     }
 
-    public Context getContext() {
+    public CA getContext() {
         return context;
     }
 
-    public void setContext(Context context) {
+    public void setContext(CA context) {
         this.context = context;
     }
 }

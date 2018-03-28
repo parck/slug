@@ -15,6 +15,7 @@ import cn.edots.slug.listener.OnTextWatcher;
  * @date 2017/9/25.
  * @desc
  */
+@Deprecated
 public class Slugger<V extends View> implements Serializable {
 
     private static final long serialVersionUID = 8213641004923326776L;

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +25,9 @@ import java.util.Map;
 import cn.edots.slug.BuildConfig;
 import cn.edots.slug.R;
 import cn.edots.slug.Standardize;
+import cn.edots.slug.annotation.BindLayout;
 import cn.edots.slug.ui.binder.fragment.SlugBinder;
 import cn.edots.slug.core.log.Logger;
-import cn.edots.slug.model.ViewModel;
 import cn.edots.slug.ui.BaseActivity;
 
 /**
@@ -33,7 +36,7 @@ import cn.edots.slug.ui.BaseActivity;
  * @desc
  */
 
-public abstract class BaseFragment<VM extends ViewModel> extends Fragment implements View.OnClickListener {
+public abstract class BaseFragment<VM extends ViewDataBinding> extends Fragment implements View.OnClickListener {
 
     protected final String TAG = this.getClass().getSimpleName();
     protected static final String DEFAULT_BACK_ICON = "BACK_ICON";
@@ -43,7 +46,6 @@ public abstract class BaseFragment<VM extends ViewModel> extends Fragment implem
     protected Fragment THIS;
     protected Activity activity;
     protected View rootView;
-    protected SlugBinder sb;
     protected Logger logger;
     protected
     @DrawableRes
@@ -82,9 +84,12 @@ public abstract class BaseFragment<VM extends ViewModel> extends Fragment implem
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        sb = SlugBinder.getInstance(THIS, container, viewModel);
-        rootView = sb.getContentView();
-        logger.i("\"鼻涕虫\" 初始化消耗 " + (System.currentTimeMillis() - CURRENT_TIME_MILLIS) + "ms");
+
+        BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
+        if (layoutResId != null && layoutResId.value() != 0) {
+            viewModel = DataBindingUtil.inflate(inflater, layoutResId.value(), container, false);
+            rootView = viewModel.getRoot();
+        } else return null; // throw exception
         return rootView;
     }
 
@@ -100,13 +105,12 @@ public abstract class BaseFragment<VM extends ViewModel> extends Fragment implem
     }
 
     public <V extends View> V findViewById(@IdRes int id) {
-        return (V) sb.getContentView().findViewById(id);
+        return (V) rootView.findViewById(id);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (sb != null) sb.finish();
     }
 
     @Override

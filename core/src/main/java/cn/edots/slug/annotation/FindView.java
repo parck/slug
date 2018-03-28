@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  * @date 2017/9/25.
  * @desc
  */
+@Deprecated
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
