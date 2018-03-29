@@ -1,5 +1,7 @@
 package cn.edots.slug.model;
 
+import android.databinding.ViewDataBinding;
+
 import java.io.Serializable;
 
 import cn.edots.slug.ui.adapter.RecyclerViewAdapter;
@@ -11,8 +13,8 @@ import cn.edots.slug.ui.adapter.RecyclerViewAdapter;
  * @desc
  */
 
-public interface Holdable extends Serializable {
+public interface Holdable<VDB extends ViewDataBinding> extends Serializable {
 
-    void holding(RecyclerViewAdapter.ViewHolder holder);
+    void holding(RecyclerViewAdapter.ViewHolder<VDB> holder);
 
 }

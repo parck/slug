@@ -1,6 +1,8 @@
 package cn.edots.slug.ui.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
@@ -86,17 +88,20 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
     // inner class
     //=======================================================================
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder<VDB extends ViewDataBinding> extends RecyclerView.ViewHolder {
         private SparseArray<View> viewContainer;
         private Context context;
         private RecyclerViewAdapter adapter;
+        private VDB viewDataBinding;
 
         public ViewHolder(Context context, @LayoutRes int layoutId, ViewGroup parent) {
-            super(LayoutInflater.from(context).inflate(layoutId, parent, false));
+            super(DataBindingUtil.inflate(LayoutInflater.from(context), layoutId, parent, false).getRoot());
             this.context = context;
             this.viewContainer = new SparseArray<>();
+            this.viewDataBinding = DataBindingUtil.getBinding(this.itemView);
         }
 
+        @Deprecated
         public <V extends View> V findViewById(@IdRes int id) {
             View view = viewContainer.get(id);
             if (view == null) {
@@ -106,6 +111,7 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
             return (V) view;
         }
 
+        @Deprecated
         public void setText(@IdRes int id, CharSequence text) {
             ((TextView) findViewById(id)).setText(text);
         }
@@ -124,6 +130,10 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
 
         public RecyclerViewAdapter getAdapter() {
             return adapter;
+        }
+
+        public VDB getViewDataBinding() {
+            return viewDataBinding;
         }
     }
 }
