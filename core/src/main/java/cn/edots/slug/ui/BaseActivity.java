@@ -47,9 +47,8 @@ public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompa
     public static final String FINISH_PARAMETER_INTENT_DATA = "FINISH_PARAMETER_INTENT_DATA";
 
     public static final String INTENT_DATA = "INTENT_DATA";
-    public static final String DEFAULT_BACK_ICON = "BACK_ICON";
-    public static final String DEFAULT_DEBUG_MODE = "DEBUG_MODE";
     public static final String VIEW_PROTOCOL = "VIEW_PROTOCOL";
+    public static final String DEFAULT_DEBUG_MODE = "DEBUG_MODE";
 
     private Protocol protocol;
     private Controller controller;

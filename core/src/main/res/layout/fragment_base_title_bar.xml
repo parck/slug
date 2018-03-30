@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="titleBar"
+            type="cn.edots.slug.model.TitleBarModel" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -10,7 +19,9 @@
         <RelativeLayout
             android:id="@+id/title_layout"
             android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_height="48dp"
+            android:background="@{titleBar.toolBarBackground == 0 ? @color/default_title_bar_color : titleBar.toolBarBackground}"
+            android:visibility="@{titleBar.withoutToolBar ? View.GONE : View.VISIBLE}">
 
             <ImageView
                 android:id="@+id/left_button"
@@ -19,8 +30,8 @@
                 android:layout_centerVertical="true"
                 android:clickable="true"
                 android:padding="12dp"
-                android:src="@drawable/default_back_icon"
-                android:visibility="visible" />
+                android:src="@{titleBar.leftButtonDrawable == null ? @drawable/default_back_icon : titleBar.leftButtonDrawable}"
+                android:visibility="@{titleBar.hideLeftButton || titleBar.leftTextButton != null ? View.GONE : View.VISIBLE}" />
 
             <TextView
                 android:id="@+id/left_button_text"
@@ -32,8 +43,9 @@
                 android:includeFontPadding="false"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
+                android:text="@{titleBar.leftTextButton}"
                 android:textColor="@color/default_text_color"
-                android:visibility="gone" />
+                android:visibility="@{titleBar.leftTextButton == null ? View.GONE : View.VISIBLE}" />
 
             <TextView
                 android:id="@+id/left_title_text"
@@ -44,9 +56,10 @@
                 android:layout_toRightOf="@id/left_button"
                 android:clickable="true"
                 android:padding="5dp"
+                android:text="@{titleBar.leftTitleText}"
                 android:textColor="@color/default_text_color"
                 android:textSize="16sp"
-                android:visibility="gone" />
+                android:visibility="@{titleBar.leftTitleText == null ? View.GONE : View.VISIBLE}" />
 
             <TextView
                 android:id="@+id/center_title_text_view"
@@ -55,9 +68,10 @@
                 android:layout_centerInParent="true"
                 android:clickable="true"
                 android:padding="5dp"
+                android:text="@{titleBar.centerTitleText}"
                 android:textColor="@color/default_text_color"
                 android:textSize="16sp"
-                android:visibility="gone" />
+                android:visibility="@{titleBar.centerTitleText == null ? View.GONE : View.VISIBLE}" />
 
             <ImageView
                 android:id="@+id/right_image_btn"
@@ -68,8 +82,8 @@
                 android:layout_marginRight="4dp"
                 android:clickable="true"
                 android:padding="12dp"
-                android:src="@drawable/default_more_icon"
-                android:visibility="gone" />
+                android:src="@{titleBar.rightButtonDrawable == null ? @drawable/default_more_icon : titleBar.rightButtonDrawable}"
+                android:visibility="@{!titleBar.showRightImageButton || titleBar.rightTextButton != null ? View.GONE : View.VISIBLE}" />
 
             <TextView
                 android:id="@+id/right_text_btn"
@@ -81,9 +95,10 @@
                 android:paddingBottom="5dp"
                 android:paddingRight="15dp"
                 android:paddingTop="5dp"
+                android:text="@{titleBar.rightTextButton}"
                 android:textColor="@color/default_text_color"
                 android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="@{titleBar.rightTextButton == null ? View.GONE : View.VISIBLE}" />
 
         </RelativeLayout>
 
@@ -91,7 +106,8 @@
             android:id="@+id/bottom_line"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@drawable/shape_title_bar_bottom_line" />
+            android:background="@drawable/shape_title_bar_bottom_line"
+            android:visibility="@{titleBar.hideBottomLine || titleBar.withoutToolBar ? View.GONE : View.VISIBLE}" />
 
         <FrameLayout
             android:id="@+id/content_layout"

@@ -27,6 +27,7 @@ import cn.edots.slug.Standardize;
 import cn.edots.slug.annotation.BindLayout;
 import cn.edots.slug.core.log.Logger;
 import cn.edots.slug.ui.BaseActivity;
+import cn.edots.slug.ui.TitleBarActivity;
 
 /**
  * @author Parck.
@@ -37,8 +38,6 @@ import cn.edots.slug.ui.BaseActivity;
 public abstract class BaseFragment<VDB extends ViewDataBinding> extends Fragment implements View.OnClickListener {
 
     protected final String TAG = this.getClass().getSimpleName();
-    protected static final String DEFAULT_BACK_ICON = "BACK_ICON";
-    protected static final String DEFAULT_DEBUG_MODE = "DEBUG_MODE";
 
     protected Fragment THIS;
     protected Activity activity;
@@ -59,9 +58,9 @@ public abstract class BaseFragment<VDB extends ViewDataBinding> extends Fragment
             ApplicationInfo appInfo = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
             Bundle metaData = appInfo.metaData;
             if (metaData != null) {
-                int resId = metaData.getInt(BaseActivity.DEFAULT_BACK_ICON);
+                int resId = metaData.getInt(TitleBarActivity.DEFAULT_BACK_ICON);
                 if (resId != 0) defaultBackIconRes = resId;
-                defaultDebugMode = metaData.getBoolean(DEFAULT_DEBUG_MODE);
+                defaultDebugMode = metaData.getBoolean(BaseActivity.DEFAULT_DEBUG_MODE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +71,6 @@ public abstract class BaseFragment<VDB extends ViewDataBinding> extends Fragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        container.removeAllViews();
         BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
         if (layoutResId != null && layoutResId.value() != 0) {
             viewDataBinding = DataBindingUtil.inflate(inflater, layoutResId.value(), container, false);

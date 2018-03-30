@@ -17,6 +17,7 @@ import android.widget.TextView;
 import cn.edots.slug.R;
 import cn.edots.slug.annotation.BindLayout;
 import cn.edots.slug.databinding.FragmentBaseTitleBarBinding;
+import cn.edots.slug.model.TitleBarModel;
 
 
 /**
@@ -46,36 +47,42 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
     protected View emptyView;
     protected ImageView emptyImage;
     protected TextView emptyText;
-    private FragmentBaseTitleBarBinding titleBarBinding;
+    protected FragmentBaseTitleBarBinding titleBarViewBinding;
+    protected TitleBarModel titleBar;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        container.removeAllViews();
-        titleBarBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_base_title_bar, container, false);
-        this.rootView = titleBarBinding.getRoot();
-        titleBarBinding.contentLayout.removeAllViews();
+        titleBarViewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_base_title_bar, container, false);
+        this.rootView = titleBarViewBinding.getRoot();
+        titleBarViewBinding.contentLayout.removeAllViews();
         BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
         if (layoutResId != null && layoutResId.value() != 0) {
             viewDataBinding = DataBindingUtil.inflate(inflater, layoutResId.value(), container, false);
-            titleBarBinding.contentLayout.addView(viewDataBinding.getRoot(), titleBarBinding.contentLayout.getLayoutParams());
+            titleBarViewBinding.contentLayout.addView(viewDataBinding.getRoot(), titleBarViewBinding.contentLayout.getLayoutParams());
         }
+        initTitleBar();
         initView();
         initListener();
         return rootView;
     }
 
+    protected void initTitleBar() {
+        titleBar = new TitleBarModel();
+        titleBarViewBinding.setTitleBar(titleBar);
+    }
+
     private void initView() {
-        emptyView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty, titleBarBinding.contentLayout, false);
+        emptyView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty, titleBarViewBinding.contentLayout, false);
         emptyImage = (ImageView) emptyView.findViewById(R.id.empty_image);
         emptyText = (TextView) emptyView.findViewById(R.id.empty_text);
 
         if (isHideBackButton()) {
-            titleBarBinding.leftButton.setVisibility(View.GONE);
+            titleBar.setHideLeftButton(true);
         }
 
         if (isHideBottomLine()) {
-            titleBarBinding.bottomLine.setVisibility(View.GONE);
+            titleBar.setHideBottomLine(true);
         }
         setLeftButtonImageResource(defaultBackIconRes);
     }
@@ -99,23 +106,23 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
     }
 
     public void setTitleBarColor(@ColorRes int resId) {
-        titleBarBinding.titleLayout.setBackgroundColor(THIS.getResources().getColor(resId));
+        titleBarViewBinding.titleLayout.setBackgroundColor(THIS.getResources().getColor(resId));
     }
 
     public void setTitleLayoutHeight(@DimenRes int resId) {
-        ViewGroup.LayoutParams layoutParams = titleBarBinding.titleLayout.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = titleBarViewBinding.titleLayout.getLayoutParams();
         layoutParams.height = getResources().getDimensionPixelSize(resId);
-        titleBarBinding.titleLayout.setLayoutParams(layoutParams);
+        titleBarViewBinding.titleLayout.setLayoutParams(layoutParams);
     }
 
     public void setTitleLayoutPixelSizeHeight(int pixel) {
-        ViewGroup.LayoutParams layoutParams = titleBarBinding.titleLayout.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = titleBarViewBinding.titleLayout.getLayoutParams();
         layoutParams.height = pixel;
-        titleBarBinding.titleLayout.setLayoutParams(layoutParams);
+        titleBarViewBinding.titleLayout.setLayoutParams(layoutParams);
     }
 
     public void setBottomLineShapeResource(@DrawableRes int resId) {
-        titleBarBinding.bottomLine.setBackgroundResource(resId);
+        titleBarViewBinding.bottomLine.setBackgroundResource(resId);
     }
 
     public void showEmpty() {
@@ -137,11 +144,11 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
             emptyImage.setOnClickListener(listener);
             emptyText.setOnClickListener(listener);
         }
-        titleBarBinding.contentLayout.addView(emptyView);
+        titleBarViewBinding.contentLayout.addView(emptyView);
     }
 
     public void hideEmpty() {
-        titleBarBinding.contentLayout.removeView(emptyView);
+        titleBarViewBinding.contentLayout.removeView(emptyView);
     }
 
     //===============================================================
@@ -150,11 +157,11 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
 
     /*设置左边图片*/
     public void setLeftButtonImageResource(@DrawableRes int resId) {
-        titleBarBinding.leftButton.setImageResource(resId);
+        titleBar.setLeftButtonDrawable(activity.getResources().getDrawable(resId));
     }
 
     public void setOnLeftButtonClickListener(View.OnClickListener listener) {
-        titleBarBinding.leftButton.setOnClickListener(listener);
+        titleBarViewBinding.leftButton.setOnClickListener(listener);
     }
     /*设置左边图片**/
 
@@ -168,15 +175,14 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
     }
 
     public void setLeftTextContent(CharSequence text, @ColorRes int resId, int spSize) {
-        titleBarBinding.leftButton.setVisibility(View.GONE);
-        titleBarBinding.leftButtonText.setVisibility(View.VISIBLE);
-        titleBarBinding.leftButtonText.setText(text);
-        titleBarBinding.leftButtonText.setTextColor(THIS.getResources().getColor(resId));
-        titleBarBinding.leftButtonText.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
+        titleBar.setLeftTextButton(String.valueOf(text));
+        titleBar.setHideLeftButton(true);
+        titleBarViewBinding.leftButtonText.setTextColor(THIS.getResources().getColor(resId));
+        titleBarViewBinding.leftButtonText.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
 
     public void setOnLeftTextButtonClickListener(View.OnClickListener listener) {
-        titleBarBinding.leftButtonText.setOnClickListener(listener);
+        titleBarViewBinding.leftButtonText.setOnClickListener(listener);
     }
     /*设置左边text*/
 
@@ -190,10 +196,10 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
     }
 
     public void setLeftTitleContent(CharSequence title, @ColorRes int resId, int spSize) {
-        titleBarBinding.leftTitleText.setVisibility(View.VISIBLE);
-        titleBarBinding.leftTitleText.setText(title);
-        titleBarBinding.leftTitleText.setTextColor(THIS.getResources().getColor(resId));
-        titleBarBinding.leftTitleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
+        titleBar.setLeftTitleText(String.valueOf(title));
+        titleBarViewBinding.leftTitleText.setVisibility(View.VISIBLE);
+        titleBarViewBinding.leftTitleText.setTextColor(THIS.getResources().getColor(resId));
+        titleBarViewBinding.leftTitleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
     /*设置左边title*/
 
@@ -207,22 +213,22 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
     }
 
     public void setCenterTitleContent(CharSequence title, @ColorRes int resId, int spSize) {
-        titleBarBinding.centerTitleTextView.setVisibility(View.VISIBLE);
-        titleBarBinding.centerTitleTextView.setText(title);
-        titleBarBinding.centerTitleTextView.setTextColor(THIS.getResources().getColor(resId));
-        titleBarBinding.centerTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
+        titleBarViewBinding.centerTitleTextView.setVisibility(View.VISIBLE);
+        titleBar.setCenterTitleText(String.valueOf(title));
+        titleBarViewBinding.centerTitleTextView.setTextColor(THIS.getResources().getColor(resId));
+        titleBarViewBinding.centerTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
     /*设置中间title*/
 
 
     /*设置右边图片*/
     public void setRightButtonImageResource(@DrawableRes int resId) {
-        titleBarBinding.rightImageBtn.setVisibility(View.VISIBLE);
-        titleBarBinding.rightImageBtn.setImageResource(resId);
+        titleBarViewBinding.rightImageBtn.setVisibility(View.VISIBLE);
+        titleBarViewBinding.rightImageBtn.setImageResource(resId);
     }
 
     public void setOnRightButtonListener(View.OnClickListener listener) {
-        titleBarBinding.rightImageBtn.setOnClickListener(listener);
+        titleBarViewBinding.rightImageBtn.setOnClickListener(listener);
     }
     /*设置右边图片*/
 
@@ -236,15 +242,13 @@ public abstract class TitleBarFragment<VDB extends ViewDataBinding> extends Base
     }
 
     public void setRightTextContent(CharSequence text, @ColorRes int resId, int spSize) {
-        titleBarBinding.rightImageBtn.setVisibility(View.GONE);
-        titleBarBinding.rightTextBtn.setVisibility(View.VISIBLE);
-        titleBarBinding.rightTextBtn.setText(text);
-        titleBarBinding.rightTextBtn.setTextColor(THIS.getResources().getColor(resId));
-        titleBarBinding.rightTextBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
+        titleBar.setRightTextButton(String.valueOf(text));
+        titleBarViewBinding.rightTextBtn.setTextColor(THIS.getResources().getColor(resId));
+        titleBarViewBinding.rightTextBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
 
     public void setOnRightTextListener(View.OnClickListener listener) {
-        titleBarBinding.rightTextBtn.setOnClickListener(listener);
+        titleBarViewBinding.rightTextBtn.setOnClickListener(listener);
     }
     /*设置右边text*/
 

@@ -32,6 +32,7 @@ import cn.edots.slug.core.cache.Session;
 import cn.edots.slug.core.log.Logger;
 import cn.edots.slug.databinding.ActivityBaseTitleBarBinding;
 import cn.edots.slug.model.Protocol;
+import cn.edots.slug.model.TitleBarModel;
 import cn.edots.slug.ui.fragment.EmptyFragment;
 
 
@@ -57,6 +58,7 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     public static final int _12SP = 12;
     public static final int _11SP = 11;
     public static final int _10SP = 10;
+    public static final String DEFAULT_BACK_ICON = "BACK_ICON";
 
     protected final String TAG = this.getClass().getSimpleName();
 
@@ -65,19 +67,22 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
 
     protected Logger logger;
     protected boolean defaultDebugMode = BuildConfig.DEBUG;
-    protected VDB viewDataBinding;
 
     protected final Activity THIS = this;
     protected
     @DrawableRes
     int defaultBackIconRes = R.drawable.default_back_icon;
-    private ActivityBaseTitleBarBinding titleBarViewBinding;
     protected final FinishReceiver finishReceiver = new FinishReceiver();
+
+    protected ActivityBaseTitleBarBinding titleBarViewBinding;
+    protected VDB viewDataBinding;
+    protected TitleBarModel titleBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         titleBarViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_base_title_bar);
+        initTitleBar();
         initData();
         initView();
         initListener();
@@ -91,13 +96,21 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
         registerFinishBroadcast();
     }
 
+    protected void initTitleBar() {
+        this.titleBar = new TitleBarModel();
+        titleBarViewBinding.setTitleBar(titleBar);
+    }
+
     private void initData() {
         try {
             ApplicationInfo appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
             Bundle metaData = appInfo.metaData;
             if (metaData != null) {
-                int resId = metaData.getInt(BaseActivity.DEFAULT_BACK_ICON);
-                if (resId != 0) defaultBackIconRes = resId;
+                int resId = metaData.getInt(DEFAULT_BACK_ICON);
+                if (resId != 0) {
+                    defaultBackIconRes = resId;
+                    titleBar.setLeftButtonDrawable(getResources().getDrawable(defaultBackIconRes));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,14 +118,14 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     }
 
     private void initView() {
-
         if (isHideBackButton()) {
-            titleBarViewBinding.leftButton.setVisibility(View.GONE);
+            titleBar.setHideLeftButton(true);
         }
 
         if (isHideBottomLine()) {
-            titleBarViewBinding.bottomLine.setVisibility(View.GONE);
+            titleBar.setHideBottomLine(true);
         }
+
         setLeftButtonImageResource(defaultBackIconRes);
     }
 
@@ -241,7 +254,7 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
 
     /*设置左边图片*/
     public void setLeftButtonImageResource(@DrawableRes int resId) {
-        titleBarViewBinding.leftButton.setImageResource(resId);
+        titleBar.setLeftButtonDrawable(getResources().getDrawable(resId));
     }
 
     public void setOnLeftButtonClickListener(View.OnClickListener listener) {
@@ -250,18 +263,17 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     /*设置左边图片**/
 
     /*设置左边text**/
-    public void setLeftTextContent(CharSequence text) {
-        setLeftTextContent(text, R.color.default_text_color);
+    public void setLeftButtonTextContent(CharSequence text) {
+        setLeftButtonTextContent(text, R.color.default_text_color);
     }
 
-    public void setLeftTextContent(CharSequence text, @ColorRes int resId) {
-        setLeftTextContent(text, resId, _16SP);
+    public void setLeftButtonTextContent(CharSequence text, @ColorRes int resId) {
+        setLeftButtonTextContent(text, resId, _16SP);
     }
 
-    public void setLeftTextContent(CharSequence text, @ColorRes int resId, int spSize) {
-        titleBarViewBinding.leftButton.setVisibility(View.GONE);
-        titleBarViewBinding.leftButtonText.setVisibility(View.VISIBLE);
-        titleBarViewBinding.leftButtonText.setText(text);
+    public void setLeftButtonTextContent(CharSequence text, @ColorRes int resId, int spSize) {
+        titleBar.setLeftTextButton(String.valueOf(text));
+        titleBar.setHideLeftButton(true);
         titleBarViewBinding.leftButtonText.setTextColor(THIS.getResources().getColor(resId));
         titleBarViewBinding.leftButtonText.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
@@ -281,8 +293,8 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     }
 
     public void setLeftTitleContent(CharSequence title, @ColorRes int resId, int spSize) {
+        titleBar.setLeftTitleText(String.valueOf(title));
         titleBarViewBinding.leftTitleText.setVisibility(View.VISIBLE);
-        titleBarViewBinding.leftTitleText.setText(title);
         titleBarViewBinding.leftTitleText.setTextColor(THIS.getResources().getColor(resId));
         titleBarViewBinding.leftTitleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
@@ -298,8 +310,8 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     }
 
     public void setCenterTitleContent(CharSequence title, @ColorRes int resId, int spSize) {
+        titleBar.setCenterTitleText(String.valueOf(title));
         titleBarViewBinding.centerTitleTextView.setVisibility(View.VISIBLE);
-        titleBarViewBinding.centerTitleTextView.setText(title);
         titleBarViewBinding.centerTitleTextView.setTextColor(THIS.getResources().getColor(resId));
         titleBarViewBinding.centerTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
@@ -308,8 +320,8 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
 
     /*设置右边图片*/
     public void setRightButtonImageResource(@DrawableRes int resId) {
-        titleBarViewBinding.rightImageBtn.setVisibility(View.VISIBLE);
-        titleBarViewBinding.rightImageBtn.setImageResource(resId);
+        titleBar.setShowRightImageButton(true);
+        titleBar.setRightButtonDrawable(getResources().getDrawable(resId));
     }
 
     public void setOnRightButtonListener(View.OnClickListener listener) {
@@ -327,9 +339,9 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     }
 
     public void setRightTextContent(CharSequence text, @ColorRes int resId, int spSize) {
-        titleBarViewBinding.rightImageBtn.setVisibility(View.GONE);
+        titleBar.setRightTextButton(String.valueOf(text));
+        titleBar.setShowRightImageButton(false);
         titleBarViewBinding.rightTextBtn.setVisibility(View.VISIBLE);
-        titleBarViewBinding.rightTextBtn.setText(text);
         titleBarViewBinding.rightTextBtn.setTextColor(THIS.getResources().getColor(resId));
         titleBarViewBinding.rightTextBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
@@ -365,6 +377,10 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
     public void onClick(View v) {
     }
 
+    public TitleBarModel getTitleBar() {
+        return this.titleBar;
+    }
+
     public void addFragment(@IdRes int layoutId, Fragment fragment) {
         getSupportFragmentManager().beginTransaction().add(layoutId, fragment, fragment.getClass().getSimpleName()).commit();
     }
@@ -373,13 +389,13 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
         getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
-    private void registerFinishBroadcast() {
+    protected void registerFinishBroadcast() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BaseActivity.EXIT_ACTION);
         registerReceiver(finishReceiver, filter);
     }
 
-    private void unregisterFinishBroadcast() {
+    protected void unregisterFinishBroadcast() {
         unregisterReceiver(finishReceiver);
     }
 
