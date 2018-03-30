@@ -13,4 +13,4 @@ https://jitpack.io/#parck/slug
 ### 如何使用slug？
 - 使用slug之前请熟悉Databinding的使用方法 https://developer.android.google.cn/topic/libraries/data-binding/index.html
 - 确保你的工程已经成功引入slug
-- 开始使用 https://github.com/parck/slug-example （v0.0.4版本）
+- 开始使用 https://github.com/parck/slug-example
