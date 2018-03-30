@@ -1,8 +1,6 @@
 package cn.edots.slug.ui;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
@@ -15,7 +13,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -24,13 +21,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.edots.slug.BuildConfig;
 import cn.edots.slug.Controller;
+import cn.edots.slug.core.FinishParameter;
+import cn.edots.slug.core.FinishReceiver;
 import cn.edots.slug.Standardize;
 import cn.edots.slug.annotation.BindLayout;
 import cn.edots.slug.core.ControllerProvider;
@@ -79,9 +77,13 @@ public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompa
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         super.onCreate(savedInstanceState);
+        BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
+        if (layoutResId != null && layoutResId.value() != 0)
+            viewDataBinding = DataBindingUtil.setContentView(this, layoutResId.value());
+        else return; // throw exception
         logger = Logger.getInstance(TAG, defaultDebugMode);
-        registerFinishBroadcast();
         init(savedInstanceState);
+        registerFinishBroadcast();
     }
 
     private void init(Bundle savedInstanceState) {
@@ -95,10 +97,7 @@ public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompa
             e.printStackTrace();
         }
 
-        BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
-        if (layoutResId != null && layoutResId.value() != 0)
-            viewDataBinding = DataBindingUtil.setContentView(this, layoutResId.value());
-        else return; // throw exception
+
         protocol = (Protocol) getIntent().getSerializableExtra(VIEW_PROTOCOL);
         if (protocol != null && protocol.getController() != null)
             try {
@@ -223,14 +222,14 @@ public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompa
     public void finishWith(Collection<String> pages) {
         Intent finishIntent = new Intent();
         finishIntent.setAction(EXIT_ACTION);
-        finishIntent.putExtra(FINISH_PARAMETER_INTENT_DATA, new BaseActivity.FinishParameter(pages));
+        finishIntent.putExtra(FINISH_PARAMETER_INTENT_DATA, new FinishParameter(pages));
         THIS.sendBroadcast(finishIntent);
     }
 
     public void finishWith(Class clazz) {
         Intent finishIntent = new Intent();
         finishIntent.setAction(EXIT_ACTION);
-        finishIntent.putExtra(FINISH_PARAMETER_INTENT_DATA, new BaseActivity.FinishParameter(null).add(clazz));
+        finishIntent.putExtra(FINISH_PARAMETER_INTENT_DATA, new FinishParameter(null).add(clazz));
         THIS.sendBroadcast(finishIntent);
     }
 
@@ -256,55 +255,6 @@ public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompa
 
     public VDB getViewDataBinding() {
         return this.viewDataBinding;
-    }
-
-    //======================================================
-    // inner class
-    //======================================================
-    public static class FinishParameter implements Serializable {
-
-        private static final long serialVersionUID = 2124180411032825937L;
-
-        private final boolean exit;
-        private final Collection<String> pages;
-
-        public FinishParameter() {
-            this.exit = true;
-            this.pages = null;
-        }
-
-        public FinishParameter(Collection<String> pages) {
-            this.exit = false;
-            if (pages == null) pages = new ArraySet<>();
-            this.pages = pages;
-        }
-
-        public boolean isExit() {
-            return exit;
-        }
-
-        public Collection<String> getPages() {
-            return pages;
-        }
-
-        public FinishParameter add(Class clazz) {
-            if (pages == null) return null;
-            pages.add(clazz.getSimpleName());
-            return this;
-        }
-    }
-
-    class FinishReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (EXIT_ACTION.equals(intent.getAction())) {
-                FinishParameter parameter = (FinishParameter) intent.getSerializableExtra(FINISH_PARAMETER_INTENT_DATA);
-                if (parameter.isExit()
-                        || (parameter.getPages() != null
-                        && parameter.getPages().contains(THIS.getClass().getSimpleName())))
-                    THIS.finish();
-            }
-        }
     }
 
 }

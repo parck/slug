@@ -17,16 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.edots.slug.BuildConfig;
+import cn.edots.slug.core.FinishParameter;
 import cn.edots.slug.R;
 import cn.edots.slug.Standardize;
 import cn.edots.slug.annotation.BindLayout;
-import cn.edots.slug.ui.binder.fragment.SlugBinder;
 import cn.edots.slug.core.log.Logger;
 import cn.edots.slug.ui.BaseActivity;
 
@@ -36,13 +34,12 @@ import cn.edots.slug.ui.BaseActivity;
  * @desc
  */
 
-public abstract class BaseFragment<VM extends ViewDataBinding> extends Fragment implements View.OnClickListener {
+public abstract class BaseFragment<VDB extends ViewDataBinding> extends Fragment implements View.OnClickListener {
 
     protected final String TAG = this.getClass().getSimpleName();
     protected static final String DEFAULT_BACK_ICON = "BACK_ICON";
     protected static final String DEFAULT_DEBUG_MODE = "DEBUG_MODE";
 
-    protected long CURRENT_TIME_MILLIS;
     protected Fragment THIS;
     protected Activity activity;
     protected View rootView;
@@ -51,8 +48,7 @@ public abstract class BaseFragment<VM extends ViewDataBinding> extends Fragment 
     @DrawableRes
     int defaultBackIconRes = R.drawable.default_back_icon;
     protected boolean defaultDebugMode = BuildConfig.DEBUG;
-    protected VM viewModel;
-    protected Class<VM> clazz;
+    protected VDB viewDataBinding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,32 +59,24 @@ public abstract class BaseFragment<VM extends ViewDataBinding> extends Fragment 
             ApplicationInfo appInfo = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
             Bundle metaData = appInfo.metaData;
             if (metaData != null) {
-                defaultBackIconRes = metaData.getInt(DEFAULT_BACK_ICON);
+                int resId = metaData.getInt(BaseActivity.DEFAULT_BACK_ICON);
+                if (resId != 0) defaultBackIconRes = resId;
                 defaultDebugMode = metaData.getBoolean(DEFAULT_DEBUG_MODE);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         logger = Logger.getInstance(TAG, defaultDebugMode);
-        CURRENT_TIME_MILLIS = System.currentTimeMillis();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        try {
-            clazz = (Class<VM>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-            if (clazz != null) viewModel = clazz.newInstance();
-        } catch (java.lang.InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
+        container.removeAllViews();
         BindLayout layoutResId = this.getClass().getAnnotation(BindLayout.class);
         if (layoutResId != null && layoutResId.value() != 0) {
-            viewModel = DataBindingUtil.inflate(inflater, layoutResId.value(), container, false);
-            rootView = viewModel.getRoot();
+            viewDataBinding = DataBindingUtil.inflate(inflater, layoutResId.value(), container, false);
+            rootView = viewDataBinding.getRoot();
         } else return null; // throw exception
         return rootView;
     }
@@ -146,11 +134,11 @@ public abstract class BaseFragment<VM extends ViewDataBinding> extends Fragment 
     public void onExit() {
         Intent finishIntent = new Intent();
         finishIntent.setAction(BaseActivity.EXIT_ACTION);
-        finishIntent.putExtra(BaseActivity.FINISH_PARAMETER_INTENT_DATA, new BaseActivity.FinishParameter());
+        finishIntent.putExtra(BaseActivity.FINISH_PARAMETER_INTENT_DATA, new FinishParameter());
         THIS.getActivity().sendBroadcast(finishIntent);
     }
 
-    public VM getViewModel() {
-        return this.viewModel;
+    public VDB getViewDataBinding() {
+        return this.viewDataBinding;
     }
 }

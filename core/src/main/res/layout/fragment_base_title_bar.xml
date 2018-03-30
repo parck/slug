@@ -1,98 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/default_title_bar_color"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
-        android:id="@+id/title_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="match_parent"
+        android:background="@color/default_title_bar_color"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/left_button"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:padding="12dp"
-            android:src="@drawable/default_back_icon"
-            android:visibility="visible" />
+        <RelativeLayout
+            android:id="@+id/title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp">
 
-        <TextView
-            android:id="@+id/left_button_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:clickable="true"
-            android:includeFontPadding="false"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/default_text_color"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/left_button"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:padding="12dp"
+                android:src="@drawable/default_back_icon"
+                android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/left_title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@id/left_button"
-            android:clickable="true"
-            android:padding="5dp"
-            android:textColor="@color/default_text_color"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/left_button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:clickable="true"
+                android:includeFontPadding="false"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/default_text_color"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/center_title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:clickable="true"
-            android:padding="5dp"
-            android:textColor="@color/default_text_color"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/left_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/left_button"
+                android:clickable="true"
+                android:padding="5dp"
+                android:textColor="@color/default_text_color"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/right_image_btn"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="4dp"
-            android:clickable="true"
-            android:padding="12dp"
-            android:src="@drawable/default_more_icon"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/center_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:clickable="true"
+                android:padding="5dp"
+                android:textColor="@color/default_text_color"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/right_text_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:paddingBottom="5dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/default_text_color"
-            android:textSize="14sp"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/right_image_btn"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:clickable="true"
+                android:padding="12dp"
+                android:src="@drawable/default_more_icon"
+                android:visibility="gone" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/right_text_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:paddingBottom="5dp"
+                android:paddingRight="15dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/default_text_color"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
-    <View
-        android:id="@+id/bottom_line"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/shape_title_bar_bottom_line" />
+        </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        <View
+            android:id="@+id/bottom_line"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/shape_title_bar_bottom_line" />
+
+        <FrameLayout
+            android:id="@+id/content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</layout>
