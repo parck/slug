@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 public class SwipeRefreshLayout extends android.support.v4.widget.SwipeRefreshLayout {
 
     public SwipeRefreshLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public SwipeRefreshLayout(Context context, AttributeSet attrs) {

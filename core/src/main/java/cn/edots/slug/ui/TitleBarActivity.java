@@ -62,8 +62,8 @@ public abstract class TitleBarActivity<VDB extends ViewDataBinding> extends AppC
 
     protected final String TAG = this.getClass().getSimpleName();
 
-    private Protocol protocol;
-    private Controller controller;
+    protected Protocol protocol;
+    protected Controller controller;
 
     protected Logger logger;
     protected boolean defaultDebugMode = BuildConfig.DEBUG;

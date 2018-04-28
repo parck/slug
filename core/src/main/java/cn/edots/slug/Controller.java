@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * @Description
  */
 
-public abstract class Controller<CA extends Activity, VDM extends ViewDataBinding> implements Serializable {
+public abstract class Controller<CA extends Activity, VDM extends ViewDataBinding> implements Serializable, View.OnClickListener {
 
     protected VDM viewDataModel;
 
@@ -40,5 +41,9 @@ public abstract class Controller<CA extends Activity, VDM extends ViewDataBindin
 
     public void setContext(CA context) {
         this.context = context;
+    }
+
+    @Override
+    public void onClick(View v) {
     }
 }

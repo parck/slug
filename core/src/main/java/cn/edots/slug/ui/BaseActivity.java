@@ -50,8 +50,8 @@ public abstract class BaseActivity<VDB extends ViewDataBinding> extends AppCompa
     public static final String VIEW_PROTOCOL = "VIEW_PROTOCOL";
     public static final String DEFAULT_DEBUG_MODE = "DEBUG_MODE";
 
-    private Protocol protocol;
-    private Controller controller;
+    protected Protocol protocol;
+    protected Controller controller;
 
     protected final Activity THIS = this;
     protected final String TAG = this.getClass().getSimpleName();
