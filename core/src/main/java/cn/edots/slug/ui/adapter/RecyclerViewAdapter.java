@@ -49,10 +49,10 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (layoutId != 0) {
             holder = new ViewHolder(context, layoutId, parent);
-            holder.setAdapter(this);
         } else {
             holder = new ViewHolder(context, layoutIds[viewType], parent);
         }
+        holder.setAdapter(this);
         return holder;
     }
 
