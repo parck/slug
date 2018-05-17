@@ -116,10 +116,6 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
             ((TextView) findViewById(id)).setText(text);
         }
 
-        public void setOnItemClickListener(View.OnClickListener listener) {
-            if (listener != null) this.itemView.setOnClickListener(listener);
-        }
-
         public Context getContext() {
             return this.context;
         }
