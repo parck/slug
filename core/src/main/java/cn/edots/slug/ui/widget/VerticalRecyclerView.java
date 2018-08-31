@@ -21,6 +21,7 @@ public class VerticalRecyclerView extends RecyclerView {
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
     private GestureDetector detector;
+    private boolean scrollable = true;
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
@@ -59,7 +60,12 @@ public class VerticalRecyclerView extends RecyclerView {
 
     @Override
     public void setAdapter(Adapter adapter) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context) {
+            @Override
+            public boolean canScrollVertically() {
+                return scrollable;
+            }
+        };
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         this.setLayoutManager(layoutManager);
         super.setAdapter(adapter);
@@ -74,6 +80,17 @@ public class VerticalRecyclerView extends RecyclerView {
                 return super.onInterceptTouchEvent(rv, e);
             }
         });
+    }
+
+    /**
+     * 禁止滚动
+     *
+     * @return
+     */
+    public void disableScroll() {
+        this.scrollable = false;
+        this.setHasFixedSize(true);
+        this.setNestedScrollingEnabled(false);
     }
 
     // =============================================================================================
