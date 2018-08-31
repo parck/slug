@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class AppCachePool<K, V> extends HashMap<K, V> {
 
     private static final long serialVersionUID = -4912064188710623560L;
-    
+
     protected static AppCachePool pool;
 
     public static AppCachePool getInstance() {
@@ -21,16 +21,12 @@ public class AppCachePool<K, V> extends HashMap<K, V> {
         return pool;
     }
 
-    public AppCachePool newTAG(String tag) {
+    public synchronized AppCachePool newTAG(String tag) {
         if (pool.get(tag) == null) pool.put(tag, new AppCachePool<K, V>());
         return (AppCachePool) pool.get(tag);
     }
 
     private AppCachePool() {
-    }
-
-    public void clear() {
-        if (pool != null) pool.clear();
     }
 
     // =============================================================================================
@@ -43,7 +39,7 @@ public class AppCachePool<K, V> extends HashMap<K, V> {
         private CachePoolHolder() {
         }
 
-        static AppCachePool getPool() {
+        static synchronized AppCachePool getPool() {
             if (pool == null) pool = new AppCachePool();
             return pool;
         }
