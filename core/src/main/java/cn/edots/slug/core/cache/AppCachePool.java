@@ -21,7 +21,7 @@ public class AppCachePool<K, V> extends HashMap<K, V> {
         return pool;
     }
 
-    public synchronized AppCachePool newTAG(String tag) {
+    public synchronized AppCachePool newContainer(String tag) {
         if (pool.get(tag) == null) pool.put(tag, new AppCachePool<K, V>());
         return (AppCachePool) pool.get(tag);
     }

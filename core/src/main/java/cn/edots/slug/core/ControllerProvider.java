@@ -12,7 +12,7 @@ import cn.edots.slug.core.cache.AppCachePool;
 
 public class ControllerProvider {
 
-    protected static AppCachePool<String, Controller> cache = AppCachePool.getInstance().newTAG(ControllerProvider.class.getSimpleName());
+    protected static AppCachePool<String, Controller> cache = AppCachePool.getInstance().newContainer(ControllerProvider.class.getSimpleName());
 
     public static <T extends Controller> T get(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T t = (T) cache.get(clazz.getSimpleName());

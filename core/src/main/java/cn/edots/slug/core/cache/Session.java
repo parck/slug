@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @desc
  */
 public class Session {
-    protected static AppCachePool<String, Object> session = AppCachePool.getInstance().newTAG(Session.class.getSimpleName());
+    protected static AppCachePool<String, Object> session = AppCachePool.getInstance().newContainer(Session.class.getSimpleName());
     protected static final StringBuilder path = new StringBuilder("/persistence/");
     protected static final String suffix = ".ser";
 

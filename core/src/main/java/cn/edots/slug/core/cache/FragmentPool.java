@@ -13,7 +13,7 @@ import cn.edots.slug.ui.fragment.BaseFragment;
 
 public class FragmentPool {
 
-    protected static AppCachePool<String, BaseFragment> cache = AppCachePool.getInstance().newTAG(FragmentPool.class.getSimpleName());
+    protected static AppCachePool<String, BaseFragment> cache = AppCachePool.getInstance().newContainer(FragmentPool.class.getSimpleName());
 
     public static <T extends Fragment> T getFragment(Class<T> clazz) {
         if (cache.get(clazz.getSimpleName()) == null) {
