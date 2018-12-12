@@ -200,7 +200,7 @@ public class Item implements  Classable<ItemBinding> {
 
 - UserAPI.java
 ```
-    public interface SellerAPI {
+    public interface UserAPI {
 
         @FormUrlEncoded
         @POST("login")
